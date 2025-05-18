@@ -10,7 +10,7 @@ class Solution {
         int up_clr = 0;
         if(r>0) up_clr = crr_st & 3;
         int lf_clr = 0;
-        if (c > 0) lf_clr = (prev_st >> (2 * r)) & 3; 
+        lf_clr = (prev_st >> (2 * r)) & 3; 
 
         int ways = 0;
         for(int clr=1; clr<=3; clr++){
