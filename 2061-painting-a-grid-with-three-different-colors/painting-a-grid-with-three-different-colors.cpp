@@ -9,8 +9,7 @@ class Solution {
         if(r==0 && dp[c][prev_st]!=-1) return dp[c][prev_st]%mod;
         int up_clr = 0;
         if(r>0) up_clr = crr_st & 3;
-        int lf_clr = 0;
-        lf_clr = (prev_st >> (2 * r)) & 3; 
+        int lf_clr = (prev_st >> ((n-r-1)*2)) & 3;
 
         int ways = 0;
         for(int clr=1; clr<=3; clr++){
