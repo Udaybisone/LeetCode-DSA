@@ -1,7 +1,7 @@
 class Solution {
     vector<vector<int>>grid;
     void f(int r1,int r2,int c1,int c2,int l,int r){
-        if(c1==c2){
+        if(l==r){
             grid[r1][c1] = l;
             return;
         }
