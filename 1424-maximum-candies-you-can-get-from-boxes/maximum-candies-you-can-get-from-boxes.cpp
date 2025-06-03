@@ -15,7 +15,6 @@ public:
             q.pop();
             vis[box] = 1;
             res += candies[box];
-            cout<<box<<endl;
             for(auto inbox:keys[box]){
                 status[inbox] = 1;
                 if(closed[inbox]){
