@@ -1,43 +1,54 @@
 class Solution {
-    vector<vector<int>> adj;
-    vector<int> subtreeSize;
-    vector<int> distSum;
-    int n;
-
-    void dfs1(int node, int parent) {
-        subtreeSize[node] = 1;  // include self
-        for (int child : adj[node]) {
-            if (child == parent) continue;
-            dfs1(child, node);
-            subtreeSize[node] += subtreeSize[child];
-            distSum[node] += distSum[child] + subtreeSize[child];
+    vector<vector<int>>adj;
+    vector<int>parant;
+    vector<int>vis;
+    vector<int>subtreesum;
+    vector<int>noOfNodes;
+    // non,sum
+    pair<int,int> calcsum(int node){
+        vis[node] = 1;
+        int non = 0;
+        int tsum = 0;
+        for(auto child:adj[node]){
+            if(!vis[child]){
+                parant[child] = node;
+                auto childcall = calcsum(child);
+                non += childcall.first;
+                int sum = childcall.second;
+                tsum += (sum+childcall.first);
+            }
         }
+        subtreesum[node] = tsum;
+        noOfNodes[node] = non+1;
+        return {non+1,tsum};
     }
 
-    void dfs2(int node, int parent) {
+    void dfs2(int node, int parent, vector<int>& ans, int n) {
         for (int child : adj[node]) {
-            if (child == parent) continue;
-            // Move root from node to child
-            distSum[child] = distSum[node] - subtreeSize[child] + (n - subtreeSize[child]);
-            dfs2(child, node);
+            if (child != parent) {
+                ans[child] = ans[node] - noOfNodes[child] + (n - noOfNodes[child]);
+                dfs2(child, node, ans, n);
+            }
         }
     }
 
 public:
     vector<int> sumOfDistancesInTree(int n, vector<vector<int>>& edges) {
-        this->n = n;
-        adj.resize(n);
-        subtreeSize.resize(n, 0);
-        distSum.resize(n, 0);
-
-        for (auto& e : edges) {
+        adj.resize(n+1);
+        parant.resize(n,-1);
+        vis.resize(n,0);
+        subtreesum.resize(n,0);
+        noOfNodes.resize(n,0);
+        for(auto e:edges){
             adj[e[0]].push_back(e[1]);
             adj[e[1]].push_back(e[0]);
         }
+        parant[0] = 0;
+        calcsum(0);
 
-        dfs1(0, -1);  // First DFS to compute subtree sizes and initial distance sum
-        dfs2(0, -1);  // Second DFS to adjust distances for all other nodes
-
-        return distSum;
+        vector<int> ans(n, 0);
+        ans[0] = subtreesum[0];
+        dfs2(0, -1, ans, n);
+        return ans;
     }
 };
