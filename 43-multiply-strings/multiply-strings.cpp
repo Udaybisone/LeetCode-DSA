@@ -4,10 +4,8 @@ public:
         int n = num1.size(), m = num2.size();
         string sum = "";
         int cnt = 0;
-
         for(int i = m - 1; i >= 0; i--) {
-            string pr = "";
-            string carry = "0";
+            string pr = "", carry = "0";
             for(int j = n - 1; j >= 0; j--) {
                 int k = (num1[j] - '0') * (num2[i] - '0') + stoi(carry);
                 string s = to_string(k);
@@ -15,18 +13,15 @@ public:
                     pr = s + pr;
                     carry = "0";
                 } else {
-                    pr = s[1] + pr;
+                    pr = s.back() + pr;
                     carry = s.substr(0, s.size() - 1);
                 }
             }
             if(carry != "0") pr = carry + pr;
-
-            // Add zero padding
             string temp(cnt, '0');
             pr += temp;
             cnt++;
 
-            // Add pr to sum
             if(sum == "") {
                 sum = pr;
             } else {
@@ -44,7 +39,7 @@ public:
                         newsum = s + newsum;
                         carry = "0";
                     } else {
-                        newsum = s[1] + newsum;
+                        newsum = s.back() + newsum;
                         carry = s.substr(0, s.size() - 1);
                     }
                     n1--;
