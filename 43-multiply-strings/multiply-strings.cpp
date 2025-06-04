@@ -14,7 +14,7 @@ public:
                     carry = "0";
                 } else {
                     pr = s.back() + pr;
-                    carry = s.substr(0, s.size() - 1);
+                    carry = s[0];
                 }
             }
             if(carry != "0") pr = carry + pr;
