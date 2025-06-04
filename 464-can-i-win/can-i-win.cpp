@@ -1,36 +1,31 @@
 class Solution {
-    int maxChoosableInteger;
-    int desiredTotal;
-    unordered_map<int, bool> memo;
+    int n;
+    unordered_map<int, bool> dp;
 
-    bool canWin(int usedNumbers, int currentTotal) {
-        if (memo.count(usedNumbers)) return memo[usedNumbers];
+    bool f(int sum, int bitmask) {
+        if (dp.count(bitmask)) return dp[bitmask];
 
-        for (int i = 0; i < maxChoosableInteger; ++i) {
-            if (!(usedNumbers & (1 << i))) {
-                // i+1 is the number we want to pick
-                if (currentTotal + (i + 1) >= desiredTotal) {
-                    return memo[usedNumbers] = true;
+        for (int i = 1; i <= n; i++) {
+            if (!((1 << i) & bitmask)) {
+                if (i >= sum) {
+                    return dp[bitmask] = true;  // current player wins immediately
                 }
-                if (!canWin(usedNumbers | (1 << i), currentTotal + (i + 1))) {
-                    return memo[usedNumbers] = true;
+                if (!f(sum - i, bitmask | (1 << i))) {
+                    return dp[bitmask] = true;  // current player can force a win
                 }
             }
         }
-
-        return memo[usedNumbers] = false;
+        return dp[bitmask] = false;  // no winning move found
     }
 
 public:
     bool canIWin(int n, int sum) {
-        maxChoosableInteger = n;
-        desiredTotal = sum;
+        this->n = n;
 
-        // Early pruning
         int maxPossible = (n * (n + 1)) / 2;
-        if (maxPossible < sum) return false;
         if (sum <= 0) return true;
+        if (maxPossible < sum) return false;
 
-        return canWin(0, 0);
+        return f(sum, 0);  // initial state: sum needed, no numbers used
     }
 };
