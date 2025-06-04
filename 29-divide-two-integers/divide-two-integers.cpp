@@ -17,7 +17,7 @@ public:
             n -= (d<<cnt);
             ans += (1<<cnt);
         }
-        if(ans == (1<<31)){
+        if(ans <= (1<<31)){
             if(sign) return INT_MIN;
             else return INT_MAX;
         }
