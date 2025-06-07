@@ -6,11 +6,11 @@ public:
         vector<int>del(n,0);
         for(int i=0; i<n; i++){
             if(s[i]=='*'){
-                for(int ch=0; ch<26; ch++){
-                    if(v[ch].size()>0){
-                        del[v[ch].back()] = 1;
+                for(auto &v:v){
+                    if(v.size()>0){
+                        del[v.back()] = 1;
                         del[i] = 1;
-                        v[ch].pop_back();
+                        v.pop_back();
                         break;
                     }
                 }
