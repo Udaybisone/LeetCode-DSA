@@ -11,13 +11,15 @@
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
+        if(!head) return head;
         auto i = head;
+        auto j = i->next;
         while(i!=NULL){
             if(i->val < x) {
                 i = i->next;
+                if(i) j = i->next;
                 continue;
             }
-            auto j = i->next;
             while(j!=NULL && j->val>=x) j = j->next;
             if(j==NULL) break;
             int value = j->val;
@@ -30,6 +32,7 @@ public:
             }
             k->val = value;
             i = i->next;
+            j = j->next;
         }
         return head;
     }
