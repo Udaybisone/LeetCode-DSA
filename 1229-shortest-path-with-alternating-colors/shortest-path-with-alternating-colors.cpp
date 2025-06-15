@@ -1,61 +1,38 @@
 class Solution {
 public:
-    vector<int> shortestAlternatingPaths(int &n, vector<vector<int>>& red, vector<vector<int>>& blue) {
-        vector<vector<int>> adj(n);
-        map<pair<int,int>,int> color; // edge → color (1: red, 2: blue, 3: both)
+    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& red, vector<vector<int>>& blue) {
+        vector<vector<pair<int, int>>> graph(n); // {neighbor, color}, 0 = red, 1 = blue
 
-        for (auto& e : red) {
-            adj[e[0]].push_back(e[1]);
-            color[{e[0], e[1]}] = 1; // red
-        }
-        for (auto& e : blue) {
-            adj[e[0]].push_back(e[1]);
-            if (color[{e[0], e[1]}] == 1)
-                color[{e[0], e[1]}] = 3; // both red and blue
-            else
-                color[{e[0], e[1]}] = 2; // blue
-        }
+        // Build graph with color info
+        for (auto& e : red)
+            graph[e[0]].push_back({e[1], 0});
+        for (auto& e : blue)
+            graph[e[0]].push_back({e[1], 1});
 
-        // dist[node][prevColor], where prevColor = 0 (red), 1 (blue)
-        vector<vector<int>> dist(n, vector<int>(2, 1e9));
-        dist[0][0] = 0; // red
-        dist[0][1] = 0; // blue
+        vector<vector<int>> dist(n, vector<int>(2, -1)); // [red_dist, blue_dist]
+        queue<tuple<int, int, int>> q; // {node, steps, prevColor}
 
-        // priority queue: {moves, node, prevColor}
-        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> pq;
-        pq.push({0, 0, 0}); // simulate coming from red
-        pq.push({0, 0, 1}); // simulate coming from blue
+        q.push({0, 0, -1});
+        dist[0][0] = dist[0][1] = 0;
 
-        while (!pq.empty()) {
-            auto [moves, node, prevColor] = pq.top();
-            pq.pop();
+        while (!q.empty()) {
+            auto [node, steps, prevColor] = q.front(); q.pop();
 
-            for (int nb : adj[node]) {
-                int clr = color[{node, nb}];
-
-                // Try switching from red to blue
-                if ((clr == 2 || clr == 3) && prevColor == 0) {
-                    if (dist[nb][1] > moves + 1) {
-                        dist[nb][1] = moves + 1;
-                        pq.push({moves + 1, nb, 1});
-                    }
-                }
-
-                // Try switching from blue to red
-                if ((clr == 1 || clr == 3) && prevColor == 1) {
-                    if (dist[nb][0] > moves + 1) {
-                        dist[nb][0] = moves + 1;
-                        pq.push({moves + 1, nb, 0});
-                    }
+            for (auto& [next, color] : graph[node]) {
+                if (color != prevColor && dist[next][color] == -1) {
+                    dist[next][color] = steps + 1;
+                    q.push({next, steps + 1, color});
                 }
             }
         }
 
-        vector<int> ans(n);
+        vector<int> res(n);
         for (int i = 0; i < n; ++i) {
-            int minDist = min(dist[i][0], dist[i][1]);
-            ans[i] = (minDist == 1e9) ? -1 : minDist;
+            if (dist[i][0] == -1 && dist[i][1] == -1) res[i] = -1;
+            else if (dist[i][0] == -1) res[i] = dist[i][1];
+            else if (dist[i][1] == -1) res[i] = dist[i][0];
+            else res[i] = min(dist[i][0], dist[i][1]);
         }
-        return ans;
+        return res;
     }
 };
