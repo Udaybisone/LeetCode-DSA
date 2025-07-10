@@ -29,20 +29,7 @@ public:
                 thidx = i;
             }
         }
-
-
         int ans = 0;
-        for(auto it:st){
-            cout<<it<<" ";
-        }
-        cout<<endl;
-        for(auto it:et){
-            cout<<it<<" ";
-        }
-        cout<<endl;
-        cout<<ft<<endl;
-        cout<<scidx<<endl;
-        cout<<th<<endl;
         for(int i=1; i<n-1; i++){
             int dur = et[i]-st[i];
             if(ft!=0 && ftidx != i && ftidx != i+1 && ft>=dur) ans = max(ans,(st[i+1]-et[i-1]));
