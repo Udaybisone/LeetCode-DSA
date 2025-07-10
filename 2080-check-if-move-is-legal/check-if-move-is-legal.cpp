@@ -3,68 +3,16 @@ public:
     bool checkMove(vector<vector<char>>& v, int rMove, int cMove, char color) {
         int n = v.size(), m = v[0].size();
         char opp = (color == 'W' ? 'B' : 'W');
-        int cnt;
+        int dx[8] = {0,1,1,1,0,-1,-1,-1}, dy[8] = {1,1,0,-1,-1,-1,0,1};
         
-        cnt = 0;
-        for (int j = cMove + 1; j < m; j++) {
-            if (v[rMove][j] == opp) { cnt++; continue; }
-            if (v[rMove][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
+        for (int k = 0; k < 8; k++) {
+            int x = rMove + dx[k], y = cMove + dy[k], cnt = 0;
+            while (x >= 0 && x < n && y >= 0 && y < m && v[x][y] == opp) {
+                cnt++; x += dx[k]; y += dy[k];
+            }
+            if (cnt > 0 && x >= 0 && x < n && y >= 0 && y < m && v[x][y] == color)
+                return true;
         }
-        
-        cnt = 0;
-        for (int j = cMove - 1; j >= 0; j--) {
-            if (v[rMove][j] == opp) { cnt++; continue; }
-            if (v[rMove][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        for (int i = rMove + 1; i < n; i++) {
-            if (v[i][cMove] == opp) { cnt++; continue; }
-            if (v[i][cMove] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        for (int i = rMove - 1; i >= 0; i--) {
-            if (v[i][cMove] == opp) { cnt++; continue; }
-            if (v[i][cMove] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        int i = rMove - 1, j = cMove - 1;
-        while (i >= 0 && j >= 0) {
-            if (v[i][j] == opp) { cnt++; i--; j--; continue; }
-            if (v[i][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        i = rMove + 1; j = cMove - 1;
-        while (i < n && j >= 0) {
-            if (v[i][j] == opp) { cnt++; i++; j--; continue; }
-            if (v[i][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        i = rMove + 1; j = cMove + 1;
-        while (i < n && j < m) {
-            if (v[i][j] == opp) { cnt++; i++; j++; continue; }
-            if (v[i][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
-        cnt = 0;
-        i = rMove - 1; j = cMove + 1;
-        while (i >= 0 && j < m) {
-            if (v[i][j] == opp) { cnt++; i--; j++; continue; }
-            if (v[i][j] == color) { if (cnt >= 1) return true; else break; }
-            break;
-        }
-        
         return false;
     }
 };
