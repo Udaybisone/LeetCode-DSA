@@ -1,37 +1,50 @@
 class Solution {
 public:
     int mostBooked(int n, vector<vector<int>>& meetings) {
-        priority_queue<int,vector<int>,greater<int>> freerooms;
-        priority_queue<pair<long long,int>,vector<pair<long long,int>>,greater<>> meets;
+        using ll = long long;
+        priority_queue<int, vector<int>, greater<int>> freerooms;
+        priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> meets;
+
         sort(meetings.begin(), meetings.end());
+        for (int i = 0; i < n; i++) freerooms.push(i);
 
-        for(int i = 0; i < n; i++) freerooms.push(i);
         vector<int> freq(n, 0);
+        int maxfreq = 0, maxroom = 0;
+        int i = 0, m = meetings.size();
+        ll time = 0;
 
-        for(auto &meet : meetings){
-            long long start = meet[0], end = meet[1];
-
-            // Free up rooms
-            while(!meets.empty() && meets.top().first <= start){
+        while (i < m) {
+            // Free rooms that finished
+            while (!meets.empty() && meets.top().first <= time) {
                 freerooms.push(meets.top().second);
                 meets.pop();
             }
 
-            if(freerooms.empty()){
-                auto [nextEnd, room] = meets.top(); meets.pop();
-                start = nextEnd;
-                end = start + (meet[1] - meet[0]);
-                freerooms.push(room);
+            // ✅ If no rooms free, skip time to earliest end time
+            if (freerooms.empty()) {
+                time = meets.top().first;
+                continue;
+            }
+
+            // ✅ Don't process a meeting until its start time
+            if (time < meetings[i][0]) {
+                time = meetings[i][0];
+                continue;
             }
 
             int room = freerooms.top(); freerooms.pop();
-            freq[room]++;
-            meets.push({end, room});
-        }
+            ll duration = meetings[i][1] - meetings[i][0];
+            ll endtime = time + duration;
 
-        int maxroom = 0;
-        for(int i = 1; i < n; i++){
-            if(freq[i] > freq[maxroom]) maxroom = i;
+            meets.push({endtime, room});
+            freq[room]++;
+
+            if (freq[room] > maxfreq || (freq[room] == maxfreq && room < maxroom)) {
+                maxfreq = freq[room];
+                maxroom = room;
+            }
+
+            i++;
         }
 
         return maxroom;
