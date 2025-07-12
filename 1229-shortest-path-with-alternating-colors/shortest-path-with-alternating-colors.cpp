@@ -1,38 +1,44 @@
 class Solution {
 public:
-    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& red, vector<vector<int>>& blue) {
-        vector<vector<pair<int, int>>> graph(n); // {neighbor, color}, 0 = red, 1 = blue
+    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& re, vector<vector<int>>& be) {
+        vector<vector<int>>radj(n),badj(n);
+        vector<vector<int>>dist(n,vector<int>(2,1e9));
 
-        // Build graph with color info
-        for (auto& e : red)
-            graph[e[0]].push_back({e[1], 0});
-        for (auto& e : blue)
-            graph[e[0]].push_back({e[1], 1});
+        for(auto &e:re){
+            radj[e[0]].push_back(e[1]);
+        }
+        for(auto &e:be){
+            badj[e[0]].push_back(e[1]);
+        }
 
-        vector<vector<int>> dist(n, vector<int>(2, -1)); // [red_dist, blue_dist]
-        queue<tuple<int, int, int>> q; // {node, steps, prevColor}
+        dist[0][1] = 0;
+        dist[0][0] = 0;
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<tuple<int, int, int>>> pq;
+        
+        // dis,node,prev
+        pq.push({0,0,0});
+        pq.push({0,0,1});
 
-        q.push({0, 0, -1});
-        dist[0][0] = dist[0][1] = 0;
+        while(!pq.empty()){
+            auto [dis,node,prev] = pq.top();
+            pq.pop();
 
-        while (!q.empty()) {
-            auto [node, steps, prevColor] = q.front(); q.pop();
+            vector<vector<int>>adj = (prev==1)?radj:badj;
 
-            for (auto& [next, color] : graph[node]) {
-                if (color != prevColor && dist[next][color] == -1) {
-                    dist[next][color] = steps + 1;
-                    q.push({next, steps + 1, color});
+            for(auto nb:adj[node]){
+                if(dist[nb][prev]>dis+1){
+                    dist[nb][prev] = dis+1;
+                    
+                    pq.push({dis+1,nb,1-prev});
                 }
             }
         }
 
-        vector<int> res(n);
-        for (int i = 0; i < n; ++i) {
-            if (dist[i][0] == -1 && dist[i][1] == -1) res[i] = -1;
-            else if (dist[i][0] == -1) res[i] = dist[i][1];
-            else if (dist[i][1] == -1) res[i] = dist[i][0];
-            else res[i] = min(dist[i][0], dist[i][1]);
+        vector<int>ans(n,1e9);
+        for(int i=0; i<n; i++){
+            ans[i] = min(dist[i][1],dist[i][0]);
+            if(ans[i]==1e9) ans[i] = -1;
         }
-        return res;
+        return ans;
     }
 };
