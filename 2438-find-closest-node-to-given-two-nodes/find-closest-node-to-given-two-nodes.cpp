@@ -1,44 +1,39 @@
 class Solution {
+    
     vector<vector<int>>adj;
     vector<int>vis;
-    vector<pair<int,int>>dist;
-
-    void f(int node,int dis){
+    void dfs(int node, int dis, vector<int>&dist){
+        dist[node] = dis;
         vis[node] = 1;
-        
         for(auto child:adj[node]){
-            if(vis[child]==0){
-                f(child,dis+1);
-            }
+            if(vis[child]) continue;
+            dfs(child,dis+1,dist);
         }
-        vis[node] = 2;
-        dist[node].first = max(dis,dist[node].first);
-        cout<<dist[node].first<<endl;
-        dist[node].second++;
     }
-
 public:
     int closestMeetingNode(vector<int>& edges, int node1, int node2) {
         int n = edges.size();
+        vector<int>dist1(n,-1),dist2(n,-1);
         adj.resize(n);
-        vis.resize(n,0);
-        dist.resize(n,{-1,0});
-        
-        for(int i=0; i<n; i++){
-            if(edges[i]==-1) continue;
-            adj[i].push_back(edges[i]);
-        }
 
-        f(node1,0);
-        fill(vis.begin(), vis.end(), 0);
-        f(node2,0);
-        int minidx = -1, mindist = 1e9;
         for(int i=0; i<n; i++){
-            if(dist[i].second==2 && dist[i].first < mindist){
-                minidx = i;
-                mindist = dist[i].first;
+            if(edges[i]!=-1){
+                adj[i].push_back(edges[i]);
             }
         }
-        return minidx;
-    }   
+        vis.resize(n,0);
+        dfs(node1,0,dist1);
+        for(int i=0; i<n; i++) vis[i] = 0;
+        dfs(node2,0,dist2);
+        int ans = 1e9;
+        int node = -1;
+
+        for(int i=0; i<n; i++){
+            if(dist1[i]!=-1 && dist2[i]!=-1 && ans>max(dist1[i],dist2[i])){
+                ans = max(dist1[i],dist2[i]);
+                node = i;
+            }
+        }
+        return node;
+    }
 };
