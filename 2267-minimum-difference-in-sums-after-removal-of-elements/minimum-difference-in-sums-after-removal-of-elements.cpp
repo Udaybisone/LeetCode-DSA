@@ -7,7 +7,7 @@ public:
 
         long long minsum = 0;
         priority_queue<long long>maxHeap;
-        for(long long i=0; i<=2*n-1; i++){
+        for(long long i=0; i<=2*n; i++){
             if(maxHeap.size()<n){
                 maxHeap.push(nums[i]);
                 minsum += nums[i];
