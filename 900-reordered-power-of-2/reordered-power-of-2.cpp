@@ -3,12 +3,12 @@ public:
     bool reorderedPowerOf2(int n) {
         map<char,long long>mp;
         string s = to_string(n);
-        sort(s.begin(),s.end());
+        sort(s.rbegin(),s.rend());
 
         long long k = 1;
-        while(k<=1e9){
+        while(k<=stol(s)){
             string temp = to_string(k);
-            sort(temp.begin(),temp.end());
+            sort(temp.rbegin(),temp.rend());
             cout<<temp<<endl;
             if(s==temp) return true;
             k *= 2;
