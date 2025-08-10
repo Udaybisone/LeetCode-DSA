@@ -1,17 +1,14 @@
 class Solution {
 public:
     bool reorderedPowerOf2(int n) {
-        map<char,long long>mp;
-        string s = to_string(n);
-        sort(s.rbegin(),s.rend());
-
-        long long k = 1;
-        while(k<=stol(s)){
-            string temp = to_string(k);
-            sort(temp.rbegin(),temp.rend());
-            cout<<temp<<endl;
-            if(s==temp) return true;
-            k *= 2;
+        auto countDigits = [](int x) {
+            string s = to_string(x);
+            sort(s.begin(), s.end());
+            return s;
+        };
+        string target = countDigits(n);
+        for (int i = 0; i < 31; i++) {
+            if (countDigits(1 << i) == target) return true;
         }
         return false;
     }
