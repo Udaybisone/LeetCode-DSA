@@ -3,8 +3,10 @@ public:
     bool doesAliceWin(string s) {
         int cnt = 0;
         for(auto c:s){
-            if(c=='a' || c=='i' || c=='o' || c=='u' || c=='e') cnt ++;
+            if(c=='a' || c=='i' || c=='o' || c=='u' || c=='e'){
+                return true;
+            }
         }
-        return !(cnt==0);
+        return false;
     }
 };
