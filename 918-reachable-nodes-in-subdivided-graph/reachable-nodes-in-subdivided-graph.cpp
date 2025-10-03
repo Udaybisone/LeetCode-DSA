@@ -1,46 +1,42 @@
 class Solution {
-    
 public:
     int reachableNodes(vector<vector<int>>& edges, int maxMoves, int n) {
-        vector<vector<pair<int,int>>>adj(n+1);
-        vector<int>dist(n,INT_MAX);
+        vector<vector<pair<int, int>>> adj(n);
+        for (auto& e : edges) {
+            adj[e[0]].emplace_back(e[1], e[2]);
+            adj[e[1]].emplace_back(e[0], e[2]);
+        }
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        vector<int> dist(n, INT_MAX);
         dist[0] = 0;
-        for(auto it:edges){
-            adj[it[0]].push_back({it[1],it[2]});
-            adj[it[1]].push_back({it[0],it[2]});
-        }
-        // dist,node
-        queue<tuple<int,int>>q;
+        pq.emplace(0, 0);
 
-        q.push({0,0});
+        while (!pq.empty()) {
+            auto [currDist, node] = pq.top(); pq.pop();
 
-        while(!q.empty()){
-           auto [dis,node] = q.front();
-           q.pop();
+            if (currDist > dist[node]) continue;
 
-           for(auto [adjnode,cnt]:adj[node]){
-                if(dis+cnt+1 <= maxMoves && dis+cnt+1 < dist[adjnode]){
-                    dist[adjnode] = dis + cnt + 1;
-                    q.push({dist[adjnode],adjnode});
+            for (auto& [neighbor, weight] : adj[node]) {
+                int nextDist = currDist + weight + 1;
+                if (nextDist <= maxMoves && nextDist < dist[neighbor]) {
+                    dist[neighbor] = nextDist;
+                    pq.emplace(nextDist, neighbor);
                 }
-           }
+            }
+        }
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            if (dist[i] <= maxMoves) ans++;
         }
 
-        int ans = 0;
-        for(int node=0; node<n; node++){
-            if(dist[node] <= maxMoves) ans++;
-            cout<<dist[node]<<endl;
+        for (auto& e : edges) {
+            int u = e[0], v = e[1], cnt = e[2];
+            int remU = dist[u] == INT_MAX ? 0 : maxMoves - dist[u];
+            int remV = dist[v] == INT_MAX ? 0 : maxMoves - dist[v];
+            ans += min(cnt, remU + remV);
         }
-        for(auto it:edges){
-            int fd = dist[it[0]];
-            int sd = dist[it[1]];
-            int cnt = it[2];
-            
-            int total = 0;
-            if(fd!=INT_MAX) total += (maxMoves-fd);
-            if(sd!=INT_MAX) total += (maxMoves-sd);
-            ans += min(cnt,total);
-        }
+
         return ans;
     }
 };
