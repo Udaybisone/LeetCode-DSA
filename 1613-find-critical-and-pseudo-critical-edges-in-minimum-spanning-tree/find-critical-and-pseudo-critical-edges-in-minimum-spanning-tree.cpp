@@ -38,11 +38,9 @@ class Solution {
     int edgesUsed = 0;
 
     if (add != -1) {
-        if (ds.findUPar(e[add][0]) != ds.findUPar(e[add][1])) {
-            ds.combine(e[add][0], e[add][1]);
-            wt += e[add][2];
-            edgesUsed++;
-        }
+        ds.combine(e[add][0], e[add][1]);
+        wt += e[add][2];
+        edgesUsed++;
     }
 
     for (int i = 0; i < e.size(); i++) {
