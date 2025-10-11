@@ -4,7 +4,7 @@ class NumArray {
 public:
     NumArray(vector<int>& nums) {
         n = nums.size();
-        st.resize(4*n+1);
+        st.resize(4*n);
         bt(0,n-1,1,nums);
     }
 
